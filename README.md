@@ -1,6 +1,6 @@
 # Blockchain with Oracle and APEX
 
-![](https://github.com/Dani3lSun/apex-plugin-dropzone/blob/master/preview.gif)
+![](https://blogdanielhochleitner.files.wordpress.com/2017/10/blockchain_demo.gif)
 
 Read more about it in this [blog post](https://blog.danielhochleitner.de/2017/10/10/blockchain-with-oracle-and-apex/)
 
