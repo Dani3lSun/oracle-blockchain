@@ -38,13 +38,21 @@ CREATE OR REPLACE PACKAGE blockchain_pkg IS
                           p_hash_algorithm IN PLS_INTEGER := dbms_crypto.hash_sh256)
     RETURN VARCHAR2;
   --
-  -- Add new Blockchain Block entry
+  -- Add new Blockchain Block entry (Autonomous Function)
   -- #param p_bc_timestamp
   -- #param p_bc_data
   -- #return NUMBER (bc_index)
   FUNCTION add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,
                      p_bc_data      IN blockchain.bc_data%TYPE)
     RETURN blockchain.bc_index%TYPE;
+  --
+  -- Add new Blockchain Block entry (Autonomous Procedure)
+  -- #param p_bc_timestamp
+  -- #param p_bc_data
+  -- #param p_bc_index (out)
+  PROCEDURE add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,
+                      p_bc_data      IN blockchain.bc_data%TYPE,
+                      p_bc_index     OUT blockchain.bc_index%TYPE);
   --
   -- Check if Blockchain is valid
   -- #return BOOLEAN

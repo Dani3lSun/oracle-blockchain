@@ -27,7 +27,7 @@ prompt APPLICATION 115 - Blockchain Demo
 -- Application Export:
 --   Application:     115
 --   Name:            Blockchain Demo
---   Date and Time:   22:01 Tuesday October 10, 2017
+--   Date and Time:   20:33 Wednesday October 11, 2017
 --   Exported By:     DHOCHLEITNER
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -86,7 +86,7 @@ wwv_flow_api.create_flow(
 ,p_display_id=>nvl(wwv_flow_application_install.get_application_id,115)
 ,p_owner=>nvl(wwv_flow_application_install.get_schema,'BLOCKCHAIN')
 ,p_name=>nvl(wwv_flow_application_install.get_application_name,'Blockchain Demo')
-,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'F_115')
+,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'BLOCKCHAIN')
 ,p_page_view_logging=>'YES'
 ,p_page_protection_enabled_y_n=>'Y'
 ,p_checksum_salt=>'E1698020674BA56601A2F75BC3F34284ED9B9A66ECD95E25AEFFE08376E79FEE'
@@ -111,7 +111,7 @@ wwv_flow_api.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_default_error_display_loc=>'INLINE_IN_NOTIFICATION'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171010220127'
+,p_last_upd_yyyymmddhh24miss=>'20171011203224'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_ui_type_name => null
 );
@@ -11734,7 +11734,7 @@ wwv_flow_api.create_page(
 ,p_page_is_public_y_n=>'N'
 ,p_cache_mode=>'NOCACHE'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171010215940'
+,p_last_upd_yyyymmddhh24miss=>'20171010224430'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(18300226300311133)
@@ -12631,13 +12631,21 @@ wwv_flow_api.create_install_script(
 '                          p_hash_algorithm IN PLS_INTEGER := dbms_crypto.hash_sh256)',
 '    RETURN VARCHAR2;',
 '  --',
-'  -- Add new Blockchain Block entry',
+'  -- Add new Blockchain Block entry (Autonomous Function)',
 '  -- #param p_bc_timestamp',
 '  -- #param p_bc_data',
 '  -- #return NUMBER (bc_index)',
 '  FUNCTION add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,',
 '                     p_bc_data      IN blockchain.bc_data%TYPE)',
 '    RETURN blockchain.bc_index%TYPE;',
+'  --',
+'  -- Add new Blockchain Block entry (Autonomous Procedure)',
+'  -- #param p_bc_timestamp',
+'  -- #param p_bc_data',
+'  -- #param p_bc_index (out)',
+'  PROCEDURE add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,',
+'                      p_bc_data      IN blockchain.bc_data%TYPE,',
+'                      p_bc_index     OUT blockchain.bc_index%TYPE);',
 '  --',
 '  -- Check if Blockchain is valid',
 '  -- #return BOOLEAN',
@@ -12814,7 +12822,7 @@ wwv_flow_api.create_install_script(
 '  END calculate_hash;',
 '  --',
 '  /*************************************************************************',
-'  * Purpose:  Add new Blockchain Block entry',
+'  * Purpose:  Add new Blockchain Block entry (Autonomous Function)',
 '  * Author:   Daniel Hochleitner',
 '  * Created:  09.10.2017',
 '  * Changed:',
@@ -12822,6 +12830,8 @@ wwv_flow_api.create_install_script(
 '  FUNCTION add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,',
 '                     p_bc_data      IN blockchain.bc_data%TYPE)',
 '    RETURN blockchain.bc_index%TYPE IS',
+'    --',
+'    PRAGMA AUTONOMOUS_TRANSACTION;',
 '    --',
 '    l_prev_blockchain_row blockchain%ROWTYPE;',
 '    l_prev_hash           VARCHAR2(500);',
@@ -12853,6 +12863,54 @@ wwv_flow_api.create_install_script(
 '    COMMIT;',
 '    --',
 '    RETURN l_bc_index;',
+'    --',
+'  EXCEPTION',
+'    WHEN OTHERS THEN',
+'      RAISE;',
+'  END add_block;',
+'  --',
+'  /*************************************************************************',
+'  * Purpose:  Add new Blockchain Block entry (Autonomous Procedure)',
+'  * Author:   Daniel Hochleitner',
+'  * Created:  11.10.2017',
+'  * Changed:',
+'  *************************************************************************/',
+'  PROCEDURE add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,',
+'                      p_bc_data      IN blockchain.bc_data%TYPE,',
+'                      p_bc_index     OUT blockchain.bc_index%TYPE) IS',
+'    --',
+'    PRAGMA AUTONOMOUS_TRANSACTION;',
+'    --',
+'    l_prev_blockchain_row blockchain%ROWTYPE;',
+'    l_prev_hash           VARCHAR2(500);',
+'    l_hash                VARCHAR2(500);',
+'    l_bc_index            blockchain.bc_index%TYPE;',
+'    --',
+'  BEGIN',
+'    --',
+'    l_bc_index            := blockchain_seq.nextval;',
+'    l_prev_blockchain_row := blockchain_pkg.get_latest_block;',
+'    l_prev_hash           := l_prev_blockchain_row.bc_hash;',
+'    l_hash                := blockchain_pkg.calculate_hash(p_bc_index     => l_bc_index,',
+'                                                           p_bc_timestamp => p_bc_timestamp,',
+'                                                           p_bc_data      => p_bc_data);',
+'    --',
+'    INSERT INTO blockchain',
+'      (bc_index,',
+'       bc_timestamp,',
+'       bc_data,',
+'       bc_previous_hash,',
+'       bc_hash)',
+'    VALUES',
+'      (l_bc_index,',
+'       p_bc_timestamp,',
+'       p_bc_data,',
+'       l_prev_hash,',
+'       l_hash);',
+'    --',
+'    COMMIT;',
+'    --',
+'    p_bc_index := l_bc_index;',
 '    --',
 '  EXCEPTION',
 '    WHEN OTHERS THEN',

@@ -152,7 +152,7 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
   END calculate_hash;
   --
   /*************************************************************************
-  * Purpose:  Add new Blockchain Block entry
+  * Purpose:  Add new Blockchain Block entry (Autonomous Function)
   * Author:   Daniel Hochleitner
   * Created:  09.10.2017
   * Changed:
@@ -160,6 +160,8 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
   FUNCTION add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,
                      p_bc_data      IN blockchain.bc_data%TYPE)
     RETURN blockchain.bc_index%TYPE IS
+    --
+    PRAGMA AUTONOMOUS_TRANSACTION;
     --
     l_prev_blockchain_row blockchain%ROWTYPE;
     l_prev_hash           VARCHAR2(500);
@@ -191,6 +193,54 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     COMMIT;
     --
     RETURN l_bc_index;
+    --
+  EXCEPTION
+    WHEN OTHERS THEN
+      RAISE;
+  END add_block;
+  --
+  /*************************************************************************
+  * Purpose:  Add new Blockchain Block entry (Autonomous Procedure)
+  * Author:   Daniel Hochleitner
+  * Created:  11.10.2017
+  * Changed:
+  *************************************************************************/
+  PROCEDURE add_block(p_bc_timestamp IN blockchain.bc_timestamp%TYPE := systimestamp,
+                      p_bc_data      IN blockchain.bc_data%TYPE,
+                      p_bc_index     OUT blockchain.bc_index%TYPE) IS
+    --
+    PRAGMA AUTONOMOUS_TRANSACTION;
+    --
+    l_prev_blockchain_row blockchain%ROWTYPE;
+    l_prev_hash           VARCHAR2(500);
+    l_hash                VARCHAR2(500);
+    l_bc_index            blockchain.bc_index%TYPE;
+    --
+  BEGIN
+    --
+    l_bc_index            := blockchain_seq.nextval;
+    l_prev_blockchain_row := blockchain_pkg.get_latest_block;
+    l_prev_hash           := l_prev_blockchain_row.bc_hash;
+    l_hash                := blockchain_pkg.calculate_hash(p_bc_index     => l_bc_index,
+                                                           p_bc_timestamp => p_bc_timestamp,
+                                                           p_bc_data      => p_bc_data);
+    --
+    INSERT INTO blockchain
+      (bc_index,
+       bc_timestamp,
+       bc_data,
+       bc_previous_hash,
+       bc_hash)
+    VALUES
+      (l_bc_index,
+       p_bc_timestamp,
+       p_bc_data,
+       l_prev_hash,
+       l_hash);
+    --
+    COMMIT;
+    --
+    p_bc_index := l_bc_index;
     --
   EXCEPTION
     WHEN OTHERS THEN
