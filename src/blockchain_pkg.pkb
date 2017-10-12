@@ -170,6 +170,8 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
   BEGIN
     --
+    LOCK TABLE blockchain IN EXCLUSIVE MODE;
+    --
     l_bc_index            := blockchain_seq.nextval;
     l_prev_blockchain_row := blockchain_pkg.get_latest_block;
     l_prev_hash           := l_prev_blockchain_row.bc_hash;
@@ -200,7 +202,7 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
   END add_block;
   --
   /*************************************************************************
-  * Purpose:  Add new Blockchain Block entry (Autonomous Procedure)
+  * Purpose:  Add new Blockchain Block entry (Calling Autonomous Function)
   * Author:   Daniel Hochleitner
   * Created:  11.10.2017
   * Changed:
@@ -209,36 +211,13 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
                       p_bc_data      IN blockchain.bc_data%TYPE,
                       p_bc_index     OUT blockchain.bc_index%TYPE) IS
     --
-    PRAGMA AUTONOMOUS_TRANSACTION;
-    --
-    l_prev_blockchain_row blockchain%ROWTYPE;
-    l_prev_hash           VARCHAR2(500);
-    l_hash                VARCHAR2(500);
-    l_bc_index            blockchain.bc_index%TYPE;
+    l_bc_index blockchain.bc_index%TYPE;
     --
   BEGIN
     --
-    l_bc_index            := blockchain_seq.nextval;
-    l_prev_blockchain_row := blockchain_pkg.get_latest_block;
-    l_prev_hash           := l_prev_blockchain_row.bc_hash;
-    l_hash                := blockchain_pkg.calculate_hash(p_bc_index     => l_bc_index,
-                                                           p_bc_timestamp => p_bc_timestamp,
-                                                           p_bc_data      => p_bc_data);
-    --
-    INSERT INTO blockchain
-      (bc_index,
-       bc_timestamp,
-       bc_data,
-       bc_previous_hash,
-       bc_hash)
-    VALUES
-      (l_bc_index,
-       p_bc_timestamp,
-       p_bc_data,
-       l_prev_hash,
-       l_hash);
-    --
-    COMMIT;
+    l_bc_index := blockchain_pkg.add_block(p_bc_timestamp => nvl(p_bc_timestamp,
+                                                                 systimestamp),
+                                           p_bc_data      => p_bc_data);
     --
     p_bc_index := l_bc_index;
     --

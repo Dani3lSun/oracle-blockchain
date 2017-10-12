@@ -46,7 +46,7 @@ CREATE OR REPLACE PACKAGE blockchain_pkg IS
                      p_bc_data      IN blockchain.bc_data%TYPE)
     RETURN blockchain.bc_index%TYPE;
   --
-  -- Add new Blockchain Block entry (Autonomous Procedure)
+  -- Add new Blockchain Block entry (Calling Autonomous Function)
   -- #param p_bc_timestamp
   -- #param p_bc_data
   -- #param p_bc_index (out)
