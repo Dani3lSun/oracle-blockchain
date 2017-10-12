@@ -27,7 +27,7 @@ prompt APPLICATION 115 - Blockchain Demo
 -- Application Export:
 --   Application:     115
 --   Name:            Blockchain Demo
---   Date and Time:   09:47 Thursday October 12, 2017
+--   Date and Time:   15:06 Thursday October 12, 2017
 --   Exported By:     DHOCHLEITNER
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -111,7 +111,7 @@ wwv_flow_api.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_default_error_display_loc=>'INLINE_IN_NOTIFICATION'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171012094655'
+,p_last_upd_yyyymmddhh24miss=>'20171012150611'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_ui_type_name => null
 );
@@ -12770,7 +12770,8 @@ wwv_flow_api.create_install_script(
 '    --',
 '    l_hash_src := p_blockchain_block.bc_index ||',
 '                  to_char(p_blockchain_block.bc_timestamp,',
-'                          ''DD-MON-YYYY HH24:MI:SSxFF TZH:TZM'') ||',
+'                          ''DD.MM.RRRR HH24:MI:SSXFF TZH:TZM'',',
+'                          ''nls_numeric_characters = ''''. '''''') ||',
 '                  p_blockchain_block.bc_data ||',
 '                  p_blockchain_block.bc_previous_hash;',
 '    --',
@@ -12808,7 +12809,8 @@ wwv_flow_api.create_install_script(
 '    --',
 '    l_hash_src := p_bc_index ||',
 '                  to_char(p_bc_timestamp,',
-'                          ''DD-MON-YYYY HH24:MI:SSxFF TZH:TZM'') || p_bc_data ||',
+'                          ''DD.MM.RRRR HH24:MI:SSXFF TZH:TZM'',',
+'                          ''nls_numeric_characters = ''''. '''''') || p_bc_data ||',
 '                  l_prev_hash;',
 '    --',
 '    l_hash := dbms_crypto.hash(l_hash_src,',
@@ -12951,7 +12953,8 @@ wwv_flow_api.create_install_script(
 '    CURSOR l_cur_blockchain IS',
 '      SELECT blockchain.bc_index,',
 '             to_char(blockchain.bc_timestamp,',
-'                     ''DD-MON-YYYY HH24:MI:SSxFF TZH:TZM'') AS bc_timestamp_string,',
+'                     ''DD.MM.RRRR HH24:MI:SSXFF TZH:TZM'',',
+'                     ''nls_numeric_characters = ''''. '''''') AS bc_timestamp_string,',
 '             apex_escape.json(substr(blockchain.bc_data,',
 '                                     1,',
 '                                     4000)) AS bc_data_string,',
