@@ -100,7 +100,8 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     l_hash_src := p_blockchain_block.bc_index ||
                   to_char(p_blockchain_block.bc_timestamp,
-                          'DD-MON-YYYY HH24:MI:SSxFF TZH:TZM') ||
+                          'DD.MM.RRRR HH24:MI:SSXFF TZH:TZM',
+                          'nls_numeric_characters = ''. ''') ||
                   p_blockchain_block.bc_data ||
                   p_blockchain_block.bc_previous_hash;
     --
@@ -138,7 +139,8 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     l_hash_src := p_bc_index ||
                   to_char(p_bc_timestamp,
-                          'DD-MON-YYYY HH24:MI:SSxFF TZH:TZM') || p_bc_data ||
+                          'DD.MM.RRRR HH24:MI:SSXFF TZH:TZM',
+                          'nls_numeric_characters = ''. ''') || p_bc_data ||
                   l_prev_hash;
     --
     l_hash := dbms_crypto.hash(l_hash_src,
@@ -281,7 +283,8 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     CURSOR l_cur_blockchain IS
       SELECT blockchain.bc_index,
              to_char(blockchain.bc_timestamp,
-                     'DD-MON-YYYY HH24:MI:SSxFF TZH:TZM') AS bc_timestamp_string,
+                     'DD.MM.RRRR HH24:MI:SSXFF TZH:TZM',
+                     'nls_numeric_characters = ''. ''') AS bc_timestamp_string,
              apex_escape.json(substr(blockchain.bc_data,
                                      1,
                                      4000)) AS bc_data_string,
