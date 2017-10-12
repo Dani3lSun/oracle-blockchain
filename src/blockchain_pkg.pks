@@ -8,6 +8,12 @@ CREATE OR REPLACE PACKAGE blockchain_pkg IS
   -- #return NUMBER (bc_index)
   FUNCTION get_latest_block_index RETURN blockchain.bc_index%TYPE;
   --
+  -- Get Blockchain Index of previous Blockchain entry
+  -- #param p_current_index
+  -- #return NUMBER (bc_index)
+  FUNCTION get_previous_block_index(p_current_index IN blockchain.bc_index%TYPE)
+    RETURN blockchain.bc_index%TYPE;
+  --
   -- Get Rowtype Record of specified Blockchain entry (Block)
   -- #param p_bc_index
   -- #return blockchain%ROWTYPE

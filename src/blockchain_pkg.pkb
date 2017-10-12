@@ -29,6 +29,42 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
   END get_latest_block_index;
   --
   /*************************************************************************
+  * Purpose:  Get Blockchain Index of previous Blockchain entry
+  * Author:   Daniel Hochleitner
+  * Created:  12.10.2017
+  * Changed:
+  *************************************************************************/
+  FUNCTION get_previous_block_index(p_current_index IN blockchain.bc_index%TYPE)
+    RETURN blockchain.bc_index%TYPE IS
+    --
+    l_bc_index blockchain.bc_index%TYPE;
+    --
+    CURSOR l_cur_block_index IS
+      SELECT blockchain.bc_index
+        FROM blockchain
+       WHERE blockchain.bc_index < p_current_index
+       ORDER BY blockchain.bc_index DESC;
+    --
+  BEGIN
+    --
+    OPEN l_cur_block_index;
+    FETCH l_cur_block_index
+      INTO l_bc_index;
+    --
+    IF l_cur_block_index%NOTFOUND THEN
+      l_bc_index := 0;
+    END IF;
+    --
+    CLOSE l_cur_block_index;
+    --
+    RETURN l_bc_index;
+    --
+  EXCEPTION
+    WHEN OTHERS THEN
+      RAISE;
+  END get_previous_block_index;
+  --
+  /*************************************************************************
   * Purpose:  Get Rowtype Record of specified Blockchain entry (Block)
   * Author:   Daniel Hochleitner
   * Created:  09.10.2017
@@ -134,7 +170,7 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
   BEGIN
     --
-    l_prev_blockchain_row := blockchain_pkg.get_block(p_bc_index => p_bc_index - 1);
+    l_prev_blockchain_row := blockchain_pkg.get_block(p_bc_index => blockchain_pkg.get_previous_block_index(p_current_index => p_bc_index));
     l_prev_hash           := l_prev_blockchain_row.bc_hash;
     --
     l_hash_src := p_bc_index ||
@@ -249,7 +285,7 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     FOR l_rec_blockchain IN l_cur_blockchain LOOP
       l_current_block := blockchain_pkg.get_block(p_bc_index => l_rec_blockchain.bc_index);
-      l_prev_block    := blockchain_pkg.get_block(p_bc_index => l_rec_blockchain.bc_index - 1);
+      l_prev_block    := blockchain_pkg.get_block(p_bc_index => blockchain_pkg.get_previous_block_index(p_current_index => l_rec_blockchain.bc_index));
       l_current_hash  := blockchain_pkg.get_block_hash(p_blockchain_block => l_current_block);
       --
       IF l_current_block.bc_hash != l_current_hash THEN

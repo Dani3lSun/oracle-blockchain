@@ -27,7 +27,7 @@ prompt APPLICATION 115 - Blockchain Demo
 -- Application Export:
 --   Application:     115
 --   Name:            Blockchain Demo
---   Date and Time:   15:06 Thursday October 12, 2017
+--   Date and Time:   16:16 Thursday October 12, 2017
 --   Exported By:     DHOCHLEITNER
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -111,7 +111,7 @@ wwv_flow_api.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_default_error_display_loc=>'INLINE_IN_NOTIFICATION'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171012150611'
+,p_last_upd_yyyymmddhh24miss=>'20171012161601'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_ui_type_name => null
 );
@@ -12601,6 +12601,12 @@ wwv_flow_api.create_install_script(
 '  -- #return NUMBER (bc_index)',
 '  FUNCTION get_latest_block_index RETURN blockchain.bc_index%TYPE;',
 '  --',
+'  -- Get Blockchain Index of previous Blockchain entry',
+'  -- #param p_current_index',
+'  -- #return NUMBER (bc_index)',
+'  FUNCTION get_previous_block_index(p_current_index IN blockchain.bc_index%TYPE)',
+'    RETURN blockchain.bc_index%TYPE;',
+'  --',
 '  -- Get Rowtype Record of specified Blockchain entry (Block)',
 '  -- #param p_bc_index',
 '  -- #return blockchain%ROWTYPE',
@@ -12697,6 +12703,42 @@ wwv_flow_api.create_install_script(
 '    WHEN OTHERS THEN',
 '      RAISE;',
 '  END get_latest_block_index;',
+'  --',
+'  /*************************************************************************',
+'  * Purpose:  Get Blockchain Index of previous Blockchain entry',
+'  * Author:   Daniel Hochleitner',
+'  * Created:  12.10.2017',
+'  * Changed:',
+'  *************************************************************************/',
+'  FUNCTION get_previous_block_index(p_current_index IN blockchain.bc_index%TYPE)',
+'    RETURN blockchain.bc_index%TYPE IS',
+'    --',
+'    l_bc_index blockchain.bc_index%TYPE;',
+'    --',
+'    CURSOR l_cur_block_index IS',
+'      SELECT blockchain.bc_index',
+'        FROM blockchain',
+'       WHERE blockchain.bc_index < p_current_index',
+'       ORDER BY blockchain.bc_index DESC;',
+'    --',
+'  BEGIN',
+'    --',
+'    OPEN l_cur_block_index;',
+'    FETCH l_cur_block_index',
+'      INTO l_bc_index;',
+'    --',
+'    IF l_cur_block_index%NOTFOUND THEN',
+'      l_bc_index := 0;',
+'    END IF;',
+'    --',
+'    CLOSE l_cur_block_index;',
+'    --',
+'    RETURN l_bc_index;',
+'    --',
+'  EXCEPTION',
+'    WHEN OTHERS THEN',
+'      RAISE;',
+'  END get_previous_block_index;',
 '  --',
 '  /*************************************************************************',
 '  * Purpose:  Get Rowtype Record of specified Blockchain entry (Block)',
@@ -12804,7 +12846,7 @@ wwv_flow_api.create_install_script(
 '    --',
 '  BEGIN',
 '    --',
-'    l_prev_blockchain_row := blockchain_pkg.get_block(p_bc_index => p_bc_index - 1);',
+'    l_prev_blockchain_row := blockchain_pkg.get_block(p_bc_index => blockchain_pkg.get_previous_block_index(p_current_index => p_bc_index));',
 '    l_prev_hash           := l_prev_blockchain_row.bc_hash;',
 '    --',
 '    l_hash_src := p_bc_index ||',
@@ -12919,7 +12961,7 @@ wwv_flow_api.create_install_script(
 '    --',
 '    FOR l_rec_blockchain IN l_cur_blockchain LOOP',
 '      l_current_block := blockchain_pkg.get_block(p_bc_index => l_rec_blockchain.bc_index);',
-'      l_prev_block    := blockchain_pkg.get_block(p_bc_index => l_rec_blockchain.bc_index - 1);',
+'      l_prev_block    := blockchain_pkg.get_block(p_bc_index => blockchain_pkg.get_previous_block_index(p_current_index => l_rec_blockchain.bc_index));',
 '      l_current_hash  := blockchain_pkg.get_block_hash(p_blockchain_block => l_current_block);',
 '      --',
 '      IF l_current_block.bc_hash != l_current_hash THEN',
