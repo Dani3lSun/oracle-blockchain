@@ -70,5 +70,11 @@ CREATE OR REPLACE PACKAGE blockchain_pkg IS
   FUNCTION get_blockchain_json(p_start_index IN blockchain.bc_index%TYPE := 1)
     RETURN CLOB;
   --
+  -- Get complete Blockchain as JSON - started with specified index (BLOB)
+  -- #param p_start_index
+  -- #return BLOB (JSON)
+  FUNCTION get_blockchain_json_blob(p_start_index IN blockchain.bc_index%TYPE := 1)
+    RETURN BLOB;
+  --
 END blockchain_pkg;
 /

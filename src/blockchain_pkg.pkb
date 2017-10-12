@@ -87,6 +87,7 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
         l_blockchain_row.bc_index         := 0;
         l_blockchain_row.bc_timestamp     := to_timestamp('01-01-1970 00:00:00',
                                                           'DD-MM-YYYY HH24:MI:SS');
+        l_blockchain_row.bc_data          := 'Genesis';
         l_blockchain_row.bc_previous_hash := 0;
         l_blockchain_row.bc_hash          := 0;
     END;
@@ -327,7 +328,8 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
              blockchain.bc_previous_hash,
              blockchain.bc_hash
         FROM blockchain
-       WHERE blockchain.bc_index >= p_start_index
+       WHERE blockchain.bc_index >= nvl(p_start_index,
+                                        1)
        ORDER BY blockchain.bc_index;
     --
   BEGIN
@@ -361,6 +363,44 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     WHEN OTHERS THEN
       RAISE;
   END get_blockchain_json;
+  --
+  /*************************************************************************
+  * Purpose:  Get complete Blockchain as JSON - started with specified index (BLOB)
+  * Author:   Daniel Hochleitner
+  * Created:  12.10.2017
+  * Changed:
+  *************************************************************************/
+  FUNCTION get_blockchain_json_blob(p_start_index IN blockchain.bc_index%TYPE := 1)
+    RETURN BLOB IS
+    --
+    l_json_clob    CLOB;
+    l_json_blob    BLOB;
+    l_dest_offset  INTEGER := 1;
+    l_src_offset   INTEGER := 1;
+    l_lang_context INTEGER := dbms_lob.default_lang_ctx;
+    l_warning      INTEGER := dbms_lob.warn_inconvertible_char;
+    --
+  BEGIN
+    --
+    l_json_clob := blockchain_pkg.get_blockchain_json(p_start_index => p_start_index);
+    --
+    dbms_lob.createtemporary(l_json_blob,
+                             FALSE);
+    dbms_lob.converttoblob(dest_lob     => l_json_blob,
+                           src_clob     => l_json_clob,
+                           amount       => dbms_lob.lobmaxsize,
+                           dest_offset  => l_dest_offset,
+                           src_offset   => l_src_offset,
+                           blob_csid    => dbms_lob.default_csid,
+                           lang_context => l_lang_context,
+                           warning      => l_warning);
+    --
+    RETURN l_json_blob;
+    --
+  EXCEPTION
+    WHEN OTHERS THEN
+      RAISE;
+  END get_blockchain_json_blob;
   --
 END blockchain_pkg;
 /

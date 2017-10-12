@@ -27,7 +27,7 @@ prompt APPLICATION 115 - Blockchain Demo
 -- Application Export:
 --   Application:     115
 --   Name:            Blockchain Demo
---   Date and Time:   16:16 Thursday October 12, 2017
+--   Date and Time:   21:19 Thursday October 12, 2017
 --   Exported By:     DHOCHLEITNER
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -111,7 +111,7 @@ wwv_flow_api.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_default_error_display_loc=>'INLINE_IN_NOTIFICATION'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171012161601'
+,p_last_upd_yyyymmddhh24miss=>'20171012211936'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_ui_type_name => null
 );
@@ -11734,7 +11734,7 @@ wwv_flow_api.create_page(
 ,p_page_is_public_y_n=>'N'
 ,p_cache_mode=>'NOCACHE'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171010224430'
+,p_last_upd_yyyymmddhh24miss=>'20171012210721'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(18300226300311133)
@@ -12245,27 +12245,11 @@ wwv_flow_api.create_page_process(
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
 '  --',
-'  l_json_clob    CLOB;',
-'  l_json_blob    BLOB;',
-'  l_dest_offset  INTEGER := 1;',
-'  l_src_offset   INTEGER := 1;',
-'  l_lang_context INTEGER := dbms_lob.default_lang_ctx;',
-'  l_warning      INTEGER := dbms_lob.warn_inconvertible_char;',
+'  l_json_blob BLOB;',
 '  --',
 'BEGIN',
 '  --',
-'  l_json_clob := blockchain_pkg.get_blockchain_json(p_start_index => 1);',
-'  --',
-'  dbms_lob.createtemporary(l_json_blob,',
-'                           FALSE);',
-'  dbms_lob.converttoblob(dest_lob     => l_json_blob,',
-'                         src_clob     => l_json_clob,',
-'                         amount       => dbms_lob.lobmaxsize,',
-'                         dest_offset  => l_dest_offset,',
-'                         src_offset   => l_src_offset,',
-'                         blob_csid    => dbms_lob.default_csid,',
-'                         lang_context => l_lang_context,',
-'                         warning      => l_warning);',
+'  l_json_blob := blockchain_pkg.get_blockchain_json_blob(p_start_index => 1);',
 '  --',
 '  owa_util.mime_header(''application/json'',',
 '                       FALSE);',
@@ -12663,6 +12647,12 @@ wwv_flow_api.create_install_script(
 '  FUNCTION get_blockchain_json(p_start_index IN blockchain.bc_index%TYPE := 1)',
 '    RETURN CLOB;',
 '  --',
+'  -- Get complete Blockchain as JSON - started with specified index (BLOB)',
+'  -- #param p_start_index',
+'  -- #return BLOB (JSON)',
+'  FUNCTION get_blockchain_json_blob(p_start_index IN blockchain.bc_index%TYPE := 1)',
+'    RETURN BLOB;',
+'  --',
 'END blockchain_pkg;',
 '/',
 ''))
@@ -12763,6 +12753,7 @@ wwv_flow_api.create_install_script(
 '        l_blockchain_row.bc_index         := 0;',
 '        l_blockchain_row.bc_timestamp     := to_timestamp(''01-01-1970 00:00:00'',',
 '                                                          ''DD-MM-YYYY HH24:MI:SS'');',
+'        l_blockchain_row.bc_data          := ''Genesis'';',
 '        l_blockchain_row.bc_previous_hash := 0;',
 '        l_blockchain_row.bc_hash          := 0;',
 '    END;',
@@ -13003,7 +12994,8 @@ wwv_flow_api.create_install_script(
 '             blockchain.bc_previous_hash,',
 '             blockchain.bc_hash',
 '        FROM blockchain',
-'       WHERE blockchain.bc_index >= p_start_index',
+'       WHERE blockchain.bc_index >= nvl(p_start_index,',
+'                                        1)',
 '       ORDER BY blockchain.bc_index;',
 '    --',
 '  BEGIN',
@@ -13037,6 +13029,44 @@ wwv_flow_api.create_install_script(
 '    WHEN OTHERS THEN',
 '      RAISE;',
 '  END get_blockchain_json;',
+'  --',
+'  /*************************************************************************',
+'  * Purpose:  Get complete Blockchain as JSON - started with specified index (BLOB)',
+'  * Author:   Daniel Hochleitner',
+'  * Created:  12.10.2017',
+'  * Changed:',
+'  *************************************************************************/',
+'  FUNCTION get_blockchain_json_blob(p_start_index IN blockchain.bc_index%TYPE := 1)',
+'    RETURN BLOB IS',
+'    --',
+'    l_json_clob    CLOB;',
+'    l_json_blob    BLOB;',
+'    l_dest_offset  INTEGER := 1;',
+'    l_src_offset   INTEGER := 1;',
+'    l_lang_context INTEGER := dbms_lob.default_lang_ctx;',
+'    l_warning      INTEGER := dbms_lob.warn_inconvertible_char;',
+'    --',
+'  BEGIN',
+'    --',
+'    l_json_clob := blockchain_pkg.get_blockchain_json(p_start_index => p_start_index);',
+'    --',
+'    dbms_lob.createtemporary(l_json_blob,',
+'                             FALSE);',
+'    dbms_lob.converttoblob(dest_lob     => l_json_blob,',
+'                           src_clob     => l_json_clob,',
+'                           amount       => dbms_lob.lobmaxsize,',
+'                           dest_offset  => l_dest_offset,',
+'                           src_offset   => l_src_offset,',
+'                           blob_csid    => dbms_lob.default_csid,',
+'                           lang_context => l_lang_context,',
+'                           warning      => l_warning);',
+'    --',
+'    RETURN l_json_blob;',
+'    --',
+'  EXCEPTION',
+'    WHEN OTHERS THEN',
+'      RAISE;',
+'  END get_blockchain_json_blob;',
 '  --',
 'END blockchain_pkg;',
 '/',
