@@ -27,7 +27,7 @@ prompt APPLICATION 115 - Blockchain Demo
 -- Application Export:
 --   Application:     115
 --   Name:            Blockchain Demo
---   Date and Time:   21:19 Thursday October 12, 2017
+--   Date and Time:   15:15 Saturday October 14, 2017
 --   Exported By:     DHOCHLEITNER
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -111,7 +111,7 @@ wwv_flow_api.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_default_error_display_loc=>'INLINE_IN_NOTIFICATION'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171012211936'
+,p_last_upd_yyyymmddhh24miss=>'20171014151516'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_ui_type_name => null
 );
@@ -12529,11 +12529,13 @@ wwv_flow_api.create_install_script(
 '  bc_data          clob not null,',
 '  bc_previous_hash varchar2(500) not null,',
 '  bc_hash          varchar2(500) not null',
-')',
-';',
+');',
 '-- Create/Recreate primary, unique and foreign key constraints ',
 'alter table BLOCKCHAIN',
-'  add constraint BLOCKCHAIN_PK primary key (BC_INDEX);'))
+'  add constraint BLOCKCHAIN_PK primary key (BC_INDEX);',
+'-- Create/Recreate indexes ',
+'create index BLOCKCHAIN_TIMESTAMP_I on BLOCKCHAIN (BC_TIMESTAMP);',
+''))
 );
 wwv_flow_api.create_install_script(
  p_id=>wwv_flow_api.id(18326716193675701)
