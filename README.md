@@ -36,4 +36,4 @@ just import [apex/f115_blockchain_demo.sql](https://github.com/Dani3lSun/oracle-
 
 ## License
 
-![MIT](https://github.com/Dani3lSun/oracle-blockchain/blob/master/LICENSE)
+[MIT License](https://github.com/Dani3lSun/oracle-blockchain/blob/master/LICENSE)
