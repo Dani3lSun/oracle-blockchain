@@ -13,7 +13,7 @@ whenever sqlerror exit sql.sqlcode rollback
 begin
 wwv_flow_api.import_begin (
  p_version_yyyy_mm_dd=>'2016.08.24'
-,p_release=>'5.1.2.00.09'
+,p_release=>'5.1.3.00.05'
 ,p_default_workspace_id=>18243942530459705
 ,p_default_application_id=>115
 ,p_default_owner=>'BLOCKCHAIN'
@@ -27,11 +27,11 @@ prompt APPLICATION 115 - Blockchain Demo
 -- Application Export:
 --   Application:     115
 --   Name:            Blockchain Demo
---   Date and Time:   15:15 Saturday October 14, 2017
+--   Date and Time:   10:08 Saturday December 16, 2017
 --   Exported By:     DHOCHLEITNER
 --   Flashback:       0
 --   Export Type:     Application Export
---   Version:         5.1.2.00.09
+--   Version:         5.1.3.00.05
 --   Instance ID:     218208257351820
 --
 
@@ -111,7 +111,7 @@ wwv_flow_api.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_default_error_display_loc=>'INLINE_IN_NOTIFICATION'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171014151516'
+,p_last_upd_yyyymmddhh24miss=>'20171216100712'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_ui_type_name => null
 );
@@ -12691,9 +12691,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_bc_index;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END get_latest_block_index;',
 '  --',
 '  /*************************************************************************',
@@ -12727,9 +12724,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_bc_index;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END get_previous_block_index;',
 '  --',
 '  /*************************************************************************',
@@ -12762,9 +12756,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_blockchain_row;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END get_block;',
 '  --',
 '  /*************************************************************************',
@@ -12783,9 +12774,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_blockchain_row;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END get_latest_block;',
 '  --',
 '  /*************************************************************************',
@@ -12815,9 +12803,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_hash;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END get_block_hash;',
 '  --',
 '  /*************************************************************************',
@@ -12853,9 +12838,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_hash;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END calculate_hash;',
 '  --',
 '  /*************************************************************************',
@@ -12903,9 +12885,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_bc_index;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END add_block;',
 '  --',
 '  /*************************************************************************',
@@ -12928,9 +12907,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    p_bc_index := l_bc_index;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END add_block;',
 '  --',
 '  /*************************************************************************',
@@ -12969,9 +12945,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN TRUE;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END is_blockchain_valid;',
 '  --',
 '  /*************************************************************************',
@@ -13027,9 +13000,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_bc_json;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END get_blockchain_json;',
 '  --',
 '  /*************************************************************************',
@@ -13065,9 +13035,6 @@ wwv_flow_api.create_install_script(
 '    --',
 '    RETURN l_json_blob;',
 '    --',
-'  EXCEPTION',
-'    WHEN OTHERS THEN',
-'      RAISE;',
 '  END get_blockchain_json_blob;',
 '  --',
 'END blockchain_pkg;',

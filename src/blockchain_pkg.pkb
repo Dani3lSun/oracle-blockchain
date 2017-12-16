@@ -23,9 +23,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_bc_index;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END get_latest_block_index;
   --
   /*************************************************************************
@@ -59,9 +56,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_bc_index;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END get_previous_block_index;
   --
   /*************************************************************************
@@ -94,9 +88,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_blockchain_row;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END get_block;
   --
   /*************************************************************************
@@ -115,9 +106,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_blockchain_row;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END get_latest_block;
   --
   /*************************************************************************
@@ -147,9 +135,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_hash;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END get_block_hash;
   --
   /*************************************************************************
@@ -185,9 +170,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_hash;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END calculate_hash;
   --
   /*************************************************************************
@@ -235,9 +217,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_bc_index;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END add_block;
   --
   /*************************************************************************
@@ -260,9 +239,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     p_bc_index := l_bc_index;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END add_block;
   --
   /*************************************************************************
@@ -301,9 +277,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN TRUE;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END is_blockchain_valid;
   --
   /*************************************************************************
@@ -359,9 +332,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_bc_json;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END get_blockchain_json;
   --
   /*************************************************************************
@@ -397,9 +367,6 @@ CREATE OR REPLACE PACKAGE BODY blockchain_pkg IS
     --
     RETURN l_json_blob;
     --
-  EXCEPTION
-    WHEN OTHERS THEN
-      RAISE;
   END get_blockchain_json_blob;
   --
 END blockchain_pkg;
