@@ -27,7 +27,7 @@ prompt APPLICATION 115 - Blockchain Demo
 -- Application Export:
 --   Application:     115
 --   Name:            Blockchain Demo
---   Date and Time:   10:08 Saturday December 16, 2017
+--   Date and Time:   20:59 Saturday December 16, 2017
 --   Exported By:     DHOCHLEITNER
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -111,7 +111,7 @@ wwv_flow_api.create_flow(
 ,p_csv_encoding=>'Y'
 ,p_default_error_display_loc=>'INLINE_IN_NOTIFICATION'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171216100712'
+,p_last_upd_yyyymmddhh24miss=>'20171216200915'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_ui_type_name => null
 );
@@ -11728,13 +11728,14 @@ wwv_flow_api.create_page(
 '.alertify .ajs-dialog {',
 '    min-width: 400px !important;',
 '    max-width: fit-content !important;',
+'    max-width: -moz-fit-content !important;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_overwrite_navigation_list=>'N'
 ,p_page_is_public_y_n=>'N'
 ,p_cache_mode=>'NOCACHE'
 ,p_last_updated_by=>'DHOCHLEITNER'
-,p_last_upd_yyyymmddhh24miss=>'20171012210721'
+,p_last_upd_yyyymmddhh24miss=>'20171216200915'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(18300226300311133)
@@ -11909,14 +11910,13 @@ wwv_flow_api.create_page_button(
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(18300226300311133)
 ,p_button_name=>'DOWNLOAD_BLOCKCHAIN_JSON'
-,p_button_action=>'REDIRECT_URL'
+,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(18287797131311073)
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Download Blockchain JSON'
 ,p_button_position=>'REGION_TEMPLATE_CREATE'
-,p_button_redirect_url=>'f?p=&APP_ID.:&APP_PAGE_ID.:&APP_SESSION.:APPLICATION_PROCESS=DOWNLOAD_BLOCKCHAIN'
-,p_button_execute_validations=>'N'
+,p_button_redirect_url=>'f?p=&APP_ID.:&APP_PAGE_ID.:&SESSION.:APPLICATION_PROCESS=DOWNLOAD_BLOCKCHAIN:&DEBUG.:::'
 ,p_icon_css_classes=>'fa-download'
 );
 wwv_flow_api.create_page_button(
